@@ -97,7 +97,7 @@ int main(){//accept input
         microbes[i].id = i;
         microbes[i].initialStr = strInp[i];
         microbes[i].currStr = strInp[i];
-        microbes[i].n = (((i+strInp[i])*29)%3);
+        microbes[i].n = (((i+strInp[i])*29)%37);
         tempEvent.microbe = &microbes[i];
         if (microbes[i].n>=microbes[i].infectedAt && microbes[i].infectedAt>=0){
             microbes[i].currStr = 0;
