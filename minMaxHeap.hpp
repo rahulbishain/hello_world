@@ -24,6 +24,11 @@ MinMaxHeap(){
 	A.push_back(temp);
 }
 
+int getHeapSize() {
+    return heapSize;
+}
+
+
 void insert(T elem){
 	int i = heapSize+1;
 	if (i>=A.size())
