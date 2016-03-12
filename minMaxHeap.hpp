@@ -75,12 +75,13 @@ class MinMaxHeap{
 
         void deleteElems(Predicate<T> &obj){
             //cout<<"0000. called to delete at heapSize="<<heapSize<<endl;
-            for(int i = 1;i <= heapSize;i++){
+            //for(int i = 1;i <= heapSize;i++){
+            for(int i = heapSize; i>=1 ; i--){
                 //cout<<"0000. checking deletion of "<<A[i]<<" @ "<<i<<endl;
                 if(obj.toDelete(A[i])){
                     //cout<<"0000. confirming deletion of "<<A[i]<<" @ "<<i<<endl;
                     deleteI(i);
-                    i = 1;              //SCOPE FOR IMPROVEMENT: check if bubble up has happened.. if not,no need for this line
+                    //i = 1;              //SCOPE FOR IMPROVEMENT: check if bubble up has happened.. if not,no need for this line
                 }
             }
         }
