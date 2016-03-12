@@ -110,7 +110,7 @@ class MinMaxHeap{
 
         void deleteI(int a){
             T temp1,temp;
-            cout<<"0000. heapsize before deletion ="<<heapSize<<endl;
+            //cout<<"0000. heapsize before deletion ="<<heapSize<<endl;
             if ((a>=1)&&(a<=heapSize)){		//delete only if in range
                 temp = A[heapSize];
                 A[heapSize] = temp1;
