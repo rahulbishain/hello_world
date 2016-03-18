@@ -45,7 +45,7 @@ class Microbe {
 class TimeEvent{
     public:
         int timeStep;
-        Microbe* microbe;	//MAKE THE < OPERATOR FOR MICROBES and TIMEEVENT
+        int microbeId;	//MAKE THE < OPERATOR FOR MICROBES and TIMEEVENT
 
         /*void operator=(const TimeEvent &m){	//NOT NEEDED
             timeStep = m.timeStep;
@@ -56,19 +56,19 @@ class TimeEvent{
             if (timeStep<m.timeStep)
                 return true;
             if (timeStep == m.timeStep)
-                return (microbe->id<m.microbe->id);
+                return (microbeId<m.microbeId);
             return false;
         }
 };
 
 
-void dispHeap(MinMaxHeap<TimeEvent> *heap){
+void dispHeap(MinMaxHeap<TimeEvent> *heap,vector<Microbe> microbes){
     for (int i=1;i<=heap->getHeapSize();i++){
         TimeEvent temp = heap->dispElem(i);
-        cout<<i<<".timeStep="<<temp.timeStep;
-        cout<<"ID="<<temp.microbe->id;
-        cout<<"infectedAt"<<temp.microbe->infectedAt;
-        cout<<"currstr="<<temp.microbe->currStr<<endl;
+        //cout<<i<<".timeStep="<<temp.timeStep;
+        //cout<<"ID="<<temp.microbeId;
+        //cout<<"infectedAt"<<microbes[temp.microbeId].infectedAt;
+        //cout<<"currstr="<<microbes[temp.microbeId].currStr<<endl;
     }
 }
 
@@ -100,9 +100,9 @@ int main(){//accept input
         int tempId = infectionTimeInp[i][0];
         int infectedTime = infectionTimeInp[i][1];
         microbes[tempId].infectedAt = infectedTime;
-        cout<<"id="<<microbes[tempId].id<<" infectsAT"<<microbes[tempId].infectedAt;
+        //cout<<"id="<<microbes[tempId].id<<" infectsAT"<<microbes[tempId].infectedAt;
     }
-    cout<<endl;
+    //cout<<endl;
     MinMaxHeap<TimeEvent> eventHeap;
     TimeEvent tempEvent;
     for (int i=0;i<n;i++){
@@ -110,7 +110,7 @@ int main(){//accept input
         microbes[i].initialStr = strInp[i];
         microbes[i].currStr = strInp[i];
         microbes[i].n = (((i+strInp[i])*29)%37+7);
-        tempEvent.microbe = &microbes[i];
+        tempEvent.microbeId = i;
         if (microbes[i].n>=microbes[i].infectedAt && microbes[i].infectedAt>=0){
             microbes[i].currStr = 0;
             tempEvent.timeStep = microbes[i].infectedAt + microbes[i].initialStr;
@@ -120,85 +120,81 @@ int main(){//accept input
             tempEvent.timeStep = microbes[i].n;
         // if (tempEvent.timeStep<=endTime){
         eventHeap.insert(tempEvent);
-            //cout<<"inserted in heap id "<<microbes[i].id<<endl;
-            //cout<<"inserted in heap id "<<tempEvent.microbe->id<<endl;
-            //cout<<"inserted in heap strength "<<microbes[i].initialStr<<endl;
-            //cout<<"inserted in heap n "<<microbes[i].n<<endl;
-            //cout<<"inserted in heap infectedAt "<<microbes[i].infectedAt<<endl;
+            ////cout<<"inserted in heap id "<<microbes[i].id<<endl;
+            ////cout<<"inserted in heap id "<<microbes[tempEvent.microbeId].id<<endl;
+            ////cout<<"inserted in heap strength "<<microbes[i].initialStr<<endl;
+            ////cout<<"inserted in heap n "<<microbes[i].n<<endl;
+            ////cout<<"inserted in heap infectedAt "<<microbes[i].infectedAt<<endl;
         // }
     }
 
-    //cout<<"allotted "<<eventHeap.getHeapSize()<<endl;
-    dispHeap(&eventHeap);
+    ////cout<<"allotted "<<eventHeap.getHeapSize()<<endl;
+    //dispHeap(&eventHeap,microbes);
     //Simulation
         TimeEvent currEvent;//holds the current time being simulated 
         currEvent=eventHeap.getMin();
         while(eventHeap.getHeapSize()>0 && currEvent.timeStep<=endTime){
-            cout<<"checking for curr time = "<<currEvent.timeStep<<" endTime="<<endTime<<" id="<<currEvent.microbe->id<<" currStr="<<currEvent.microbe->currStr<<" infect@"<<currEvent.microbe->infectedAt<<" initialStr="<<currEvent.microbe->initialStr<<endl;
-            if (currEvent.microbe->currStr==0)
-                cout<<"d "<<currEvent.microbe->id<<" "<<currEvent.timeStep<<endl;
+            //cout<<"checking for curr time = "<<currEvent.timeStep<<" endTime="<<endTime<<" id="<<microbes[currEvent.microbeId].id<<" currStr="<<microbes[currEvent.microbeId].currStr<<" infect@"<<microbes[currEvent.microbeId].infectedAt<<" initialStr="<<microbes[currEvent.microbeId].initialStr<<endl;
+            if (microbes[currEvent.microbeId].currStr==0)
+                cout<<"d "<<microbes[currEvent.microbeId].id<<" "<<currEvent.timeStep<<endl;
             else{
                 int tempId = ++lastMicrobeIndex;
-                int tempInitialStr = currEvent.microbe->initialStr;
+                int tempInitialStr = microbes[currEvent.microbeId].initialStr;
                 int tempCurrStr = tempInitialStr;
                 int tempn = (((tempId + tempInitialStr)*29)%37+7);
                 int tempInfectedAt = -1;
                 int nextTimeStep = currEvent.timeStep;
                 cout<<"b "<<tempId<<" "<<currEvent.timeStep<<endl;
-                cout<<"infectionAt "<<microbes[tempId].infectedAt<<endl;
+                //cout<<"infectionAt "<<microbes[tempId].infectedAt<<endl;
                 if (tempId==microbes.size()){
                     nextTimeStep+=tempn;
-                    cout<<"inserting new microbe vector @"<<microbes.size()<<endl;
+                    //cout<<"inserting new microbe vector @"<<microbes.size()<<endl;
                     Microbe tempMicrobe(tempId,tempInitialStr,tempCurrStr,tempn,tempInfectedAt);
-                    cout<<" ID 0 = "<<microbes[0].id<<endl;
-                    cout<<" ID 1 = "<<microbes[1].id<<endl;
                     microbes.push_back(tempMicrobe);
-                    cout<<" ID 0 = "<<microbes[0].id<<endl;
-                    cout<<" ID 1 = "<<microbes[1].id<<endl;
                 }
                 else{
                     if ((microbes[tempId].infectedAt<=nextTimeStep + tempn)&&(microbes[tempId].infectedAt>0)){
                         tempCurrStr = 0;
                         tempInfectedAt = microbes[tempId].infectedAt;
                         nextTimeStep = (tempInfectedAt + tempInitialStr);
-                        cout<<"child with old ID="<<tempId<<"infect at "<<tempInfectedAt<<" next timestep = "<<nextTimeStep<<endl;
+                        //cout<<"child with old ID="<<tempId<<"infect at "<<tempInfectedAt<<" next timestep = "<<nextTimeStep<<endl;
                     }
                     else{
                         nextTimeStep += tempn;
-                        cout<<"child with old ID="<<tempId<<" next timestep = "<<nextTimeStep<<endl;
+                        //cout<<"child with old ID="<<tempId<<" next timestep = "<<nextTimeStep<<endl;
                     }
                     Microbe tempMicrobe(tempId,tempInitialStr,tempCurrStr,tempn,microbes[tempId].infectedAt);
                     microbes[tempId]=tempMicrobe;
                 }
                 TimeEvent tempEvent;
                 tempEvent.timeStep = nextTimeStep;
-                tempEvent.microbe = tempId;
-                cout<<"going to insert child in heap"<<endl;
+                tempEvent.microbeId = tempId;
+                //cout<<"going to insert child in heap"<<endl;
                 eventHeap.insert(tempEvent);
-                dispHeap(&eventHeap);
-                // cout<<"next scheduled due to new one at "<<nextTimeStep<<endl;
+                //dispHeap(&eventHeap,microbes);
+                // //cout<<"next scheduled due to new one at "<<nextTimeStep<<endl;
                 tempEvent=currEvent;//BEGIN insert the next time event for parent
-                // cout<<"trying to insert parent id="<<tempEvent.microbe->id<<" currEvent="<<tempEvent.timeStep<<" n="<<tempEvent.microbe->n<<" infectedAt="<<tempEvent.microbe->infectedAt<<endl; 
-                if (((currEvent.timeStep+currEvent.microbe->n)>=currEvent.microbe->infectedAt) &&
-                        (currEvent.microbe->infectedAt>=0)){
-                    tempEvent.timeStep = currEvent.microbe->infectedAt + currEvent.microbe->currStr - 1;
-                    tempEvent.microbe->currStr=0;
-                    //cout<<"found infection, inserting dead event for "<<tempEvent.microbe->id<<" at "<<tempEvent.timeStep<<" strength reduced to "<<tempEvent.microbe->currStr<<endl;
+                // //cout<<"trying to insert parent id="<<microbes[tempEvent.microbeId].id<<" currEvent="<<tempEvent.timeStep<<" n="<<microbes[tempEvent.microbeId].n<<" infectedAt="<<microbes[tempEvent.microbeId].infectedAt<<endl; 
+                if (((currEvent.timeStep+microbes[currEvent.microbeId].n)>=microbes[currEvent.microbeId].infectedAt) &&
+                        (microbes[currEvent.microbeId].infectedAt>=0)){
+                    tempEvent.timeStep = microbes[currEvent.microbeId].infectedAt + microbes[currEvent.microbeId].currStr - 1;
+                    microbes[tempEvent.microbeId].currStr=0;
+                    ////cout<<"found infection, inserting dead event for "<<microbes[tempEvent.microbeId].id<<" at "<<tempEvent.timeStep<<" strength reduced to "<<microbes[tempEvent.microbeId].currStr<<endl;
                 }
                 else{
-                    tempEvent.timeStep += currEvent.microbe->n;
-                    tempEvent.microbe->currStr--;
-                    // cout<<"inserting next birthevent for "<<tempEvent.microbe->id<<" at "<<tempEvent.timeStep<<" strength "<<tempEvent.microbe->currStr<<endl;
+                    tempEvent.timeStep += microbes[currEvent.microbeId].n;
+                    microbes[tempEvent.microbeId].currStr--;
+                    // //cout<<"inserting next birthevent for "<<microbes[tempEvent.microbeId].id<<" at "<<tempEvent.timeStep<<" strength "<<microbes[tempEvent.microbeId].currStr<<endl;
                 }
                 //if (tempEvent.timeStep<=endTime){
                 eventHeap.insert(tempEvent);
-                // cout<<"inserted parent's copy id "<<tempEvent.microbe->id<<" at next "<<tempEvent.timeStep<<endl;
+                // //cout<<"inserted parent's copy id "<<microbes[tempEvent.microbeId].id<<" at next "<<tempEvent.timeStep<<endl;
                // }
             }
-            dispHeap(&eventHeap);
+            //dispHeap(&eventHeap,microbes);
             eventHeap.deleteMin();
-             cout<<"new size="<<eventHeap.getHeapSize()<<endl;
-            dispHeap(&eventHeap);
+             //cout<<"new size="<<eventHeap.getHeapSize()<<endl;
+            //dispHeap(&eventHeap,microbes);
             currEvent = eventHeap.getMin();
         }
     cout<<eventHeap.getHeapSize()<<endl;
